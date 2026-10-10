@@ -39,7 +39,8 @@ class AgentState(TypedDict, total=False):
     ]
     response_message: str
 
-    #Контекст, по которому были получены кешируемые результаты. Позже он поможет понять, какие узлы нужно выполнить повторно
+    #Контекст, по которому были получены кешируемые результаты. 
+    #Позже он поможет понять, какие узлы нужно выполнить повторно
     intent_input_snapshot: str | None
     amount_input_snapshot: str | None
     cluster_input_goal: str | None
