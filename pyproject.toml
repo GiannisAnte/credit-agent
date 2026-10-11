@@ -9,6 +9,7 @@ dependencies = [
     "langchain-openai",
     "langgraph",
     "pydantic-settings",
+    "uvicorn[standard]>=0.54.0",
 ]
 
 [project.scripts]
