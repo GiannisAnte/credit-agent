@@ -1,3 +1,5 @@
+
+from langgraph.checkpoint.memory import InMemorySaver
 from langgraph.graph import END, START, StateGraph
 
 from app.graph.nodes.response import response_node
@@ -6,9 +8,15 @@ from app.graph.state import AgentState
 
 
 def route_after_safety(state: AgentState) -> str:
-    if state.get("prompt_injection_detected"):
+    if (
+        state.get("is_trolling")
+        or state.get("is_compliance")
+        or state.get("prompt_injection")
+    ):
         return "response"
 
+    # Пока бизнес-ноды не подключены, обычные запросы тоже
+    # переходят к response. Позже заменим этот маршрут.
     return "response"
 
 
@@ -19,6 +27,7 @@ def build_graph():
     builder.add_node("response", response_node)
 
     builder.add_edge(START, "safety_check")
+
     builder.add_conditional_edges(
         "safety_check",
         route_after_safety,
@@ -26,6 +35,8 @@ def build_graph():
             "response": "response",
         },
     )
+
     builder.add_edge("response", END)
 
-    return builder.compile()
+    checkpointer = InMemorySaver()
+    return builder.compile(checkpointer=checkpointer)

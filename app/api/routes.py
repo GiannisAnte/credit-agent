@@ -36,7 +36,14 @@ def run_agent(request: AgentRequest) -> AgentResponse:
         "current_message": current_message,
     }
 
-    result = graph.invoke(initial_state)
+    result = graph.invoke(
+    initial_state,
+    config={
+        "configurable": {
+            "thread_id": request.session_id,
+        }
+    },
+)
 
     return AgentResponse(
         session_id=request.session_id,
